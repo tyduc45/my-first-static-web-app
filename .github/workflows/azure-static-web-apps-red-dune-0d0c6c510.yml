@@ -14,26 +14,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: 'npm'
-
-      - name: Install deps
-        run: npm ci
-
-      - name: Build
-        run: npm run build       
-
-      - name: Upload to Azure Static Web Apps
+      - name: Build & Deploy with Oryx (Node 22)
         uses: Azure/static-web-apps-deploy@v1
+        env:
+          ORYX_NODE_VERSION: '22.12.0'   # force oryx to use node v22
+          ENABLE_DYNAMIC_INSTALL: 'true'  # if oryx do not have such version then install it dynamically
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_RED_DUNE_0D0C6C510 }}
           action: upload
-          app_location: "/"       
-          api_location: ""
-          output_location: "dist" # Vite output dir by defualt
-          skip_app_build: true    
+          app_location: "/"               
+          api_location: ""                
+          output_location: "dist"        
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
